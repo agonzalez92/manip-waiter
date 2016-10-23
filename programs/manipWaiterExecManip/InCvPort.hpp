@@ -41,6 +41,9 @@ class InCvPort : public BufferedPort<Bottle> {
             coordY = 0.347;
         }
 
+        void setIEncodersControl(yarp::dev::IEncoders *iEncoders) {
+            this->iEncoders = iEncoders;
+        }
         void setIPositionControl(yarp::dev::IPositionControl *iPositionControl) {
             this->iPositionControl = iPositionControl;
         }

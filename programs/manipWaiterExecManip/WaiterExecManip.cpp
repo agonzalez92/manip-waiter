@@ -40,6 +40,10 @@ bool WaiterExecManip::configure(ResourceFinder &rf) {
         printf("leftArm remote_controlboard instantiation not worked.\n");
         return false;
     }
+    if( ! leftArmDevice.view(iEncoders) ) {
+        printf("view(iEncoders) not worked.\n");
+        return false;
+    }
     if( ! leftArmDevice.view(iPositionControl) ) {
         printf("view(iPositionControl) not worked.\n");
         return false;
@@ -48,6 +52,7 @@ bool WaiterExecManip::configure(ResourceFinder &rf) {
         printf("view(iVelocityControl) not worked.\n");
         return false;
     }
+    inCvPort.setIEncodersControl(iEncoders);
     inCvPort.setIPositionControl(iPositionControl);
     inCvPort.setIVelocityControl(iVelocityControl);
 
