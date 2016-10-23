@@ -39,12 +39,11 @@ class WaiterExecManip : public RFModule {
 
     protected:
 
-        yarp::os::Port outPort;
-
         InSrPort inSrPort;
         InCvPort inCvPort;
         yarp::dev::PolyDriver leftArmDevice;
         yarp::dev::IPositionControl *iPositionControl;
+        yarp::dev::IVelocityControl *iVelocityControl;
 
         bool interruptModule();
         double getPeriod();

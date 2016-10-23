@@ -44,9 +44,12 @@ bool WaiterExecManip::configure(ResourceFinder &rf) {
         printf("view(iPositionControl) not worked.\n");
         return false;
     }
+    if( ! leftArmDevice.view(iVelocityControl) ) {
+        printf("view(iVelocityControl) not worked.\n");
+        return false;
+    }
     inCvPort.setIPositionControl(iPositionControl);
-
-    inCvPort.setOutPort(&outPort);
+    inCvPort.setIVelocityControl(iVelocityControl);
 
     //-----------------OPEN LOCAL PORTS------------//
     inSrPort.setInCvPortPtr(&inCvPort);
@@ -54,7 +57,6 @@ bool WaiterExecManip::configure(ResourceFinder &rf) {
     inSrPort.useCallback();
     inSrPort.open("/manipWaiterExecManip/DialogueManager/command:i");
     inCvPort.open("/manipWaiterExecManip/cvBottle/state:i");
-    outPort.open("/manipWaiterExecManip/leftArm/CartesianControl/rpc:c");
 
     return true;
 }
@@ -80,7 +82,6 @@ bool WaiterExecManip::interruptModule() {
     inSrPort.interrupt();
     inCvPort.close();
     inSrPort.close();
-    outPort.close();
     return true;
 }
 

@@ -44,47 +44,26 @@ class InCvPort : public BufferedPort<Bottle> {
         void setIPositionControl(yarp::dev::IPositionControl *iPositionControl) {
             this->iPositionControl = iPositionControl;
         }
+        void setIVelocityControl(yarp::dev::IVelocityControl *iVelocityControl) {
+            this->iVelocityControl = iVelocityControl;
+        }
 
         void setFollow(int value);
-        void setOutPort(yarp::os::Port *_pOutPort);
-        yarp::os::Port *pOutPort;
 
-protected:
+    private:
+
         int follow;
         int a;
         int c;
         int i;
         double coordY;
+
         /** Callback on incoming Bottle. **/
         virtual void onRead(Bottle& b);
 
-        yarp::dev::IPositionControl *iPositionControl;
-
-        yarp::dev::PolyDriver robotDevice;
         yarp::dev::IEncoders *iEncoders;
-//        yarp::dev::IPositionControl *iPositionControl;
+        yarp::dev::IPositionControl *iPositionControl;
         yarp::dev::IVelocityControl *iVelocityControl;
-        yarp::dev::IControlLimits *iControlLimits;
-        yarp::dev::ITorqueControl *iTorqueControl;
-
-        int numRobotJoints, numSolverLinks;
-
-        /** State encoded as a VOCAB which can be stored as an int */
-        int currentState;
-
-        int getCurrentState();
-        void setCurrentState(int value);
-        yarp::os::Semaphore currentStateReady;
-
-        /** MOVL keep track of movement start time to know at what time of trajectory movement we are */
-        double movementStartTime;
-
-        /** MOVV desired Cartesian velocity */
-        std::vector<double> xdotd;
-
-        /** FORC desired Cartesian force */
-        std::vector<double> td;
-
 
 };
 
