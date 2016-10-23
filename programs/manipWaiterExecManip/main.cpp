@@ -29,7 +29,11 @@
 
 using namespace yarp::os;
 
+YARP_DECLARE_DEVICES(ManipWaiterYarp)
+
 int main(int argc, char **argv) {
+
+    YARP_REGISTER_DEVICES(ManipWaiterYarp);
 
     ResourceFinder rf;
     rf.setVerbose(true);
