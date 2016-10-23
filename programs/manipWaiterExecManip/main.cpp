@@ -37,8 +37,8 @@ int main(int argc, char **argv) {
 
     ResourceFinder rf;
     rf.setVerbose(true);
-    rf.setDefaultContext("waiterExecManip");
-    rf.setDefaultConfigFile("waiterExecManip.ini");
+    rf.setDefaultContext("manipWaiterExecManip");
+    rf.setDefaultConfigFile("manipWaiterExecManip.ini");
     rf.configure(argc, argv);
 
     teo::WaiterExecManip mod;
