@@ -38,7 +38,6 @@ class InCvPort : public BufferedPort<Bottle> {
         {
             follow = 0;
             a = 0;
-            coordY = 0.347;
         }
 
         void setIEncodersControl(yarp::dev::IEncoders *iEncoders) {
@@ -57,9 +56,6 @@ class InCvPort : public BufferedPort<Bottle> {
 
         int follow;
         int a;
-        int c;
-        int i;
-        double coordY;
 
         /** Callback on incoming Bottle. **/
         virtual void onRead(Bottle& b);
