@@ -22,6 +22,7 @@ void InCvPort::onRead(Bottle& b) {
         iEncoders->getAxes(&numRobotJoints);
         CD_INFO("numRobotJoints: %d.\n",numRobotJoints);
 
+        iPositionControl->setPositionMode();
         printf("begin MOVE TO START POSITION\n");
         double initpos[7] = {-30,0,0,-90,0,30,0};
         iPositionControl->positionMove(initpos);
@@ -34,6 +35,7 @@ void InCvPort::onRead(Bottle& b) {
             fflush(stdout);
         }
         printf("end MOVE TO START POSITION\n");
+        iVelocityControl->setVelocityMode();
         a=1;
     }
 
@@ -43,24 +45,7 @@ void InCvPort::onRead(Bottle& b) {
     //double y = b.get(1).asDouble(); //Data pxYpos
     double angle = b.get(2).asDouble(); //Angle
 
-    //------------------------CONTROL: consigna------------------------
-
-    std::vector<double> xdotd(6, 0.0);
-
-    if ( (angle >= 70) && (angle < 88) )  //Correction 01. Move arm Y left.
-    {
-        xdotd[1] = 0.05; // [1] corresponds to Y axis
-    }
-    else if( (angle > 92) && (angle <= 110) )  //Correction 02. Move arm Y right.
-    {
-        xdotd[1] = -0.05; // [1] corresponds to Y axis
-    }
-    else //if(z>=88 && z<=92)
-    {
-        printf("THE BOTTLE IS IN EQUILIBRIUM \n");
-    }
-
-    //------------------------CONTROL: control en si------------------------
+    //------------------------CONTROL------------------------
 
     //-- Obtain current joint position
     std::vector<double> currentQ(numRobotJoints);
@@ -79,12 +64,22 @@ void InCvPort::onRead(Bottle& b) {
         return;
     }
 
-    //-- If out of limits, override Y axis movement. Starting pos is around 0.347
-    if( x[1] < 0.25 )
-        xdotd[1] = 0;
+    std::vector<double> xdotd(6, 0.0);
 
-    if( x[1] > 0.55 )
-        xdotd[1] = 0;
+    if ( (angle >= 70) && (angle < 88) )  //Correction 01. Move arm Y left.
+    {
+        if( x[1] > 0.25 )
+            xdotd[1] = -0.05; // [1] corresponds to Y axis
+    }
+    else if( (angle > 92) && (angle <= 110) )  //Correction 02. Move arm Y right.
+    {
+        if( x[1] < 0.45 )
+            xdotd[1] = 0.05; // [1] corresponds to Y axis
+    }
+    else //if(z>=88 && z<=92)
+    {
+        printf("THE BOTTLE IS IN EQUILIBRIUM \n");
+    }
 
     //-- Compute joint velocity commands and send to robot.
     std::vector<double> commandQdot;
