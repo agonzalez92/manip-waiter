@@ -17,8 +17,6 @@ void InCvPort::setFollow(int value)
 
 void InCvPort::onRead(Bottle& b) {
 
-    yarp::os::Bottle outputCartesian;
-
 //------------------------SET LEFT ARM INITIAL POSITION------------------------
    if (a==0){
         printf("begin MOVE TO START POSITION\n");
@@ -49,13 +47,13 @@ void InCvPort::onRead(Bottle& b) {
     {
         //if((coordY+0.05)<=0.55)
         //{
-            outputCartesian.addString("movv");
+            /*outputCartesian.addString("movv");
             outputCartesian.addDouble( 0 );
             outputCartesian.addDouble( 0.05);
             outputCartesian.addDouble( 0 );
             outputCartesian.addDouble( 0 );
             outputCartesian.addDouble( 0 );
-            outputCartesian.addDouble( 0 );
+            outputCartesian.addDouble( 0 );*/
             //Time::delay(0.1);
         /*}
         else if((coordY+0.05)>0.55)
@@ -69,13 +67,13 @@ void InCvPort::onRead(Bottle& b) {
         //printf("value coordYleft: %f", coordY);
         //if((coordY-0.05)>=0.25)
         //{
-            outputCartesian.addString("movv");
+            /*outputCartesian.addString("movv");
             outputCartesian.addDouble( 0 );
             outputCartesian.addDouble( -0.05);
             outputCartesian.addDouble( 0 );
             outputCartesian.addDouble( 0 );
             outputCartesian.addDouble( 0 );
-            outputCartesian.addDouble( 0 );
+            outputCartesian.addDouble( 0 );*/
             //Time::delay(1);
         /*}
         else if((coordY-0.05)<0.05){
@@ -84,14 +82,14 @@ void InCvPort::onRead(Bottle& b) {
     }
     else //if(z>=88 && z<=92)
     {
-        printf("THE BOTTLE IS IN EQUILIBRIUM \n");
+        /*printf("THE BOTTLE IS IN EQUILIBRIUM \n");
         outputCartesian.addString("movv");
         outputCartesian.addDouble( 0 );
         outputCartesian.addDouble( 0 );
         outputCartesian.addDouble( 0 );
         outputCartesian.addDouble( 0 );
         outputCartesian.addDouble( 0 );
-        outputCartesian.addDouble( 0 );
+        outputCartesian.addDouble( 0 );*/
     }
 
 //    if (outputCartesian.size() > 0)
