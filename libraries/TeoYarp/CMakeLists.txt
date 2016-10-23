@@ -1,9 +1,9 @@
 # Copyright: (C) 2013 Universidad Carlos III de Madrid
 # Authors: Juan G. Victores
 
-IF (ENABLE_TeoYarp)
+IF (ENABLE_ManipWaiterYarp)
 
-  option(ENABLE_launchTeoYarp "Choose if you want to compile launchTeoYarp" TRUE)
+  option(ENABLE_launchManipWaiterYarp "Choose if you want to compile launchManipWaiterYarp" TRUE)
 
   find_package(YARP REQUIRED)
   include_directories(${YARP_INCLUDE_DIRS})
@@ -11,25 +11,21 @@ IF (ENABLE_TeoYarp)
   include(YarpPlugin)
 
   # Exporting dependencies for TEOConfig.cmake quite manually for now... 
-  set(TEO_BODY_LIBRARIES ${TEO_LIBRARIES} TeoYarp CACHE INTERNAL "appended libraries") 
+  #set(MANIP_WAITER_LIBRARIES ${MANIP_WAITER_LIBRARIES} TeoYarp CACHE INTERNAL "appended libraries")
 
-  yarp_begin_plugin_library(TeoYarp)
-    add_subdirectory(FakeControlboard)
+  yarp_begin_plugin_library(ManipWaiterYarp)
     add_subdirectory(KdlSolver)
-    add_subdirectory(BasicCartesianControl)
-    add_subdirectory(CartesianControlServer)
-    add_subdirectory(CartesianControlClient)
-  yarp_end_plugin_library(TeoYarp)
+  yarp_end_plugin_library(ManipWaiterYarp)
 
-  install(TARGETS TeoYarp DESTINATION lib)
+  install(TARGETS ManipWaiterYarp DESTINATION lib)
 
-  IF (ENABLE_launchTeoYarp)
+  IF (ENABLE_launchManipWaiterYarp)
 
-    yarp_add_plugin_library_executable(launchTeoYarp TeoYarp)
-    install(TARGETS launchTeoYarp DESTINATION bin)
+    yarp_add_plugin_library_executable(launchManipWaiterYarp ${MANIP_WAITER_LIBRARIES})
+    install(TARGETS launchManipWaiterYarp DESTINATION bin)
 
-  ENDIF (ENABLE_launchTeoYarp)
+  ENDIF (ENABLE_launchManipWaiterYarp)
 
-ENDIF (ENABLE_TeoYarp)
+ENDIF (ENABLE_ManipWaiterYarp)
 
 

@@ -14,7 +14,7 @@ endif(COMMAND cmake_policy)
 project(MANIP_WAITER)
 
 ### options: cpp libraries
-option(ENABLE_TeoYarp "Choose if you want to compile TeoYarp" TRUE)
+option(ENABLE_ManipWaiterYarp "Choose if you want to compile ManipWaiterYarp" TRUE)
 
 ### options: cpp programs
 option(ENABLE_manipWaiterDialogueManager "Choose if you want to compile waiterDialogueManager" TRUE)
@@ -22,11 +22,7 @@ option(ENABLE_manipWaiterExecHead "Choose if you want to compile waiterExecHead"
 option(ENABLE_manipWaiterExecManip "Choose if you want to compile waiterExecManip" TRUE)
 
 ### options: force default
-option(ENABLE_TeoYarp_BasicCartesianControl "Enable/disable compilation of TeoYarp_BasicCartesianControl" TRUE)
-option(ENABLE_TeoYarp_CartesianControlServer "Enable/disable compilation of TeoYarp_CartesianControlServer" TRUE)
-option(ENABLE_TeoYarp_CartesianControlClient "Enable/disable compilation of TeoYarp_CartesianControlClient" TRUE)
-option(ENABLE_TeoYarp_KdlSolver "Enable/disable compilation of TeoYarp_KdlSolver" TRUE)
-option(ENABLE_TeoYarp_FakeControlboard "Enable/disable compilation of TeoYarp_FakeControlboard" TRUE)
+option(ENABLE_ManipWaiterYarp_KdlSolver "Enable/disable compilation of ManipWaiterYarp_KdlSolver" TRUE)
 
 ##### test and coverage options
 option(ENABLE_tests "Choose if you want to compile tests" TRUE)
