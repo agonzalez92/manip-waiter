@@ -28,10 +28,6 @@
 
 
 using namespace yarp::os;
-int a=0;
-int b=0;
-int iteration=1;
-float degrees;
 
 int main(int argc, char **argv) {
 
