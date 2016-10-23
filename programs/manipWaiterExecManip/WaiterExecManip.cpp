@@ -24,7 +24,7 @@ bool WaiterExecManip::configure(ResourceFinder &rf) {
         ::exit(1);
     }
 
-    //
+    //-- Robot device
     Property leftArmOptions;
     leftArmOptions.put("device","remote_controlboard");
     std::string localStr("/manipWaiterExecManip/");
@@ -55,6 +55,23 @@ bool WaiterExecManip::configure(ResourceFinder &rf) {
     inCvPort.setIEncodersControl(iEncoders);
     inCvPort.setIPositionControl(iPositionControl);
     inCvPort.setIVelocityControl(iVelocityControl);
+
+    //-- Robot device
+    yarp::os::Property solverOptions;
+    solverOptions.fromString( rf.toString() );
+    std::string solverStr = "KdlSolver";
+    solverOptions.put("device",solverStr);
+
+    solverDevice.open(solverOptions);
+    if( ! solverDevice.isValid() ) {
+        CD_ERROR("solver device not valid: %s.\n",solverStr.c_str());
+        return false;
+    }
+    if( ! solverDevice.view(iCartesianSolver) ) {
+        CD_ERROR("Could not view iCartesianSolver in: %s.\n",solverStr.c_str());
+        return false;
+    }
+    inCvPort.setICartesianSolver(iCartesianSolver);
 
     //-----------------OPEN LOCAL PORTS------------//
     inSrPort.setInCvPortPtr(&inCvPort);
@@ -87,6 +104,9 @@ bool WaiterExecManip::interruptModule() {
     inSrPort.interrupt();
     inCvPort.close();
     inSrPort.close();
+
+    solverDevice.close();
+    leftArmDevice.close();
     return true;
 }
 

@@ -2,7 +2,6 @@
 
 #include "InCvPort.hpp"
 
-
 namespace teo
 {
 
@@ -18,7 +17,11 @@ void InCvPort::setFollow(int value)
 void InCvPort::onRead(Bottle& b) {
 
 //------------------------SET LEFT ARM INITIAL POSITION------------------------
-   if (a==0){
+    if (a==0)
+    {
+        iEncoders->getAxes(&numRobotJoints);
+        CD_INFO("numRobotJoints: %d.\n",numRobotJoints);
+
         printf("begin MOVE TO START POSITION\n");
         double initpos[7] = {-30,0,0,-90,0,30,0};
         iPositionControl->positionMove(initpos);
@@ -35,13 +38,22 @@ void InCvPort::onRead(Bottle& b) {
     }
 
 
-//-------------------READING INPUT MESSAGES FROM VISION SENSOR--------------------
-
+    //-------------------READING INPUT MESSAGES FROM VISION SENSOR--------------------
     //double x = b.get(0).asDouble(); //Data pxXpos
     //double y = b.get(1).asDouble(); //Data pxYpos
     double angle = b.get(2).asDouble(); //Angle
 
-//------------------------CORRECTION OUTPUTS------------------------
+    //------------------------CONTROL------------------------
+
+    //-- Obtain current joint position
+    std::vector<double> currentQ(numRobotJoints);
+    if ( ! iEncoders->getEncoders( currentQ.data() ) )
+    {
+        CD_WARNING("getEncoders failed, not updating control this iteration.\n");
+        return;
+    }
+
+    std::vector<double> xdotd;
 
     if(angle>=70 && angle<88)  //Correction 01. Move arm Y left.
     {
@@ -92,8 +104,36 @@ void InCvPort::onRead(Bottle& b) {
         outputCartesian.addDouble( 0 );*/
     }
 
-//    if (outputCartesian.size() > 0)
-  //      pOutPort->write(outputCartesian);
+    //-- Compute joint velocity commands and send to robot.
+    std::vector<double> commandQdot;
+    if (! iCartesianSolver->diffInvKin(currentQ,xdotd,commandQdot) )
+    {
+        CD_WARNING("diffInvKin failed, not updating control this iteration.\n");
+        return;
+    }
+
+    for(int i=0;i<commandQdot.size();i++)
+    {
+        if( fabs(commandQdot[i]) > DEFAULT_QDOT_LIMIT)
+        {
+            CD_ERROR("diffInvKin too dangerous, STOP!!!.\n");
+            for(int i=0;i<commandQdot.size();i++)
+                commandQdot[i] = 0;
+        }
+    }
+
+    CD_DEBUG_NO_HEADER("[MOVV] ");
+    for(int i=0;i<6;i++)
+        CD_DEBUG_NO_HEADER("%f ",xdotd[i]);
+    CD_DEBUG_NO_HEADER("-> ");
+    for(int i=0;i<numRobotJoints;i++)
+        CD_DEBUG_NO_HEADER("%f ",commandQdot[i]);
+    CD_DEBUG_NO_HEADER("[deg/s]\n");
+
+    if( ! iVelocityControl->velocityMove( commandQdot.data() ) )
+    {
+        CD_WARNING("velocityMove failed, not updating control this iteration.\n");
+    }
 
 }
 

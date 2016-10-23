@@ -41,10 +41,16 @@ class WaiterExecManip : public RFModule {
 
         InSrPort inSrPort;
         InCvPort inCvPort;
+
+        //-- Robot device
         yarp::dev::PolyDriver leftArmDevice;
         yarp::dev::IEncoders *iEncoders;
         yarp::dev::IPositionControl *iPositionControl;
         yarp::dev::IVelocityControl *iVelocityControl;
+
+        //-- Solver device
+        yarp::dev::PolyDriver solverDevice;
+        teo::ICartesianSolver *iCartesianSolver;
 
         bool interruptModule();
         double getPeriod();

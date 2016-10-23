@@ -10,6 +10,12 @@
 #include <fstream>
 #include <stdio.h>
 
+#include <math.h>  //-- fabs
+
+#include "ICartesianSolver.h"
+
+#include "ColorDebug.hpp"
+
 //instrucciones para el followme
 #define VOCAB_FOLLOW_ME VOCAB4('f','o','l','l')
 #define VOCAB_STOP_FOLLOWING VOCAB4('s','f','o','l')
@@ -19,6 +25,8 @@
 #define VOCAB_GO_TEO VOCAB4('g','t','e','o')
 #define VOCAB_WATER_PLEASE VOCAB4('w','p','l','e')
 #define VOCAB_STOP_TEO VOCAB4('s','t','e','o')
+
+#define DEFAULT_QDOT_LIMIT 10
 
 using namespace yarp::os;
 
@@ -49,6 +57,9 @@ class InCvPort : public BufferedPort<Bottle> {
         void setIVelocityControl(yarp::dev::IVelocityControl *iVelocityControl) {
             this->iVelocityControl = iVelocityControl;
         }
+        void setICartesianSolver(teo::ICartesianSolver *iCartesianSolver) {
+            this->iCartesianSolver = iCartesianSolver;
+        }
 
         void setFollow(int value);
 
@@ -56,13 +67,18 @@ class InCvPort : public BufferedPort<Bottle> {
 
         int follow;
         int a;
+        int numRobotJoints;
 
         /** Callback on incoming Bottle. **/
         virtual void onRead(Bottle& b);
 
+        //-- Robot device
         yarp::dev::IEncoders *iEncoders;
         yarp::dev::IPositionControl *iPositionControl;
         yarp::dev::IVelocityControl *iVelocityControl;
+
+        //-- Solver device
+        teo::ICartesianSolver *iCartesianSolver;
 
 };
 
