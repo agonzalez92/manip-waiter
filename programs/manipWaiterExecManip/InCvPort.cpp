@@ -66,6 +66,20 @@ void InCvPort::onRead(Bottle& b) {
 
     std::vector<double> xdotd(6, 0.0);
 
+    //-- 0.526938 0.346914 0.312769 -1.0 0.000015 -0.000015 90.003044
+
+    if ( x[0] > 0.526938+0.001 )
+        xdotd[0] = -0.01;
+
+    if ( x[0] < 0.526938-0.001 )
+        xdotd[0] = 0.01;
+
+    if ( x[2] > 0.312769+0.001 )
+        xdotd[2] = -0.01;
+
+    if ( x[2] < 0.312769-0.001 )
+        xdotd[2] = 0.01;
+
     if ( (angle >= 70) && (angle < 88) )  //Correction 01. Move arm Y left.
     {
         if( x[1] > 0.25 )
