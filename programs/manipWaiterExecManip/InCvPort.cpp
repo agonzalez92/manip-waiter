@@ -43,7 +43,24 @@ void InCvPort::onRead(Bottle& b) {
     //double y = b.get(1).asDouble(); //Data pxYpos
     double angle = b.get(2).asDouble(); //Angle
 
-    //------------------------CONTROL------------------------
+    //------------------------CONTROL: consigna------------------------
+
+    std::vector<double> xdotd(6, 0.0);
+
+    if ( (angle >= 70) && (angle < 88) )  //Correction 01. Move arm Y left.
+    {
+        xdotd[1] = 0.05; // [1] corresponds to Y axis
+    }
+    else if( (angle > 92) && (angle <= 110) )  //Correction 02. Move arm Y right.
+    {
+        xdotd[1] = -0.05; // [1] corresponds to Y axis
+    }
+    else //if(z>=88 && z<=92)
+    {
+        printf("THE BOTTLE IS IN EQUILIBRIUM \n");
+    }
+
+    //------------------------CONTROL: control en si------------------------
 
     //-- Obtain current joint position
     std::vector<double> currentQ(numRobotJoints);
@@ -53,56 +70,21 @@ void InCvPort::onRead(Bottle& b) {
         return;
     }
 
-    std::vector<double> xdotd;
+    std::vector<double> x;
 
-    if(angle>=70 && angle<88)  //Correction 01. Move arm Y left.
+    //-- Perform forward kinematics to obtain cartesian position
+    if ( ! iCartesianSolver->fwdKin(currentQ,x) )
     {
-        //if((coordY+0.05)<=0.55)
-        //{
-            /*outputCartesian.addString("movv");
-            outputCartesian.addDouble( 0 );
-            outputCartesian.addDouble( 0.05);
-            outputCartesian.addDouble( 0 );
-            outputCartesian.addDouble( 0 );
-            outputCartesian.addDouble( 0 );
-            outputCartesian.addDouble( 0 );*/
-            //Time::delay(0.1);
-        /*}
-        else if((coordY+0.05)>0.55)
-        {
-            printf("BOTTLE FALL right!! \n");
-        }*/
+        CD_ERROR("fwdKin failed.\n");
+        return;
+    }
 
-    }
-    else if(angle>92 && angle<=110)  //Correction 02. Move arm Y right.
-    {
-        //printf("value coordYleft: %f", coordY);
-        //if((coordY-0.05)>=0.25)
-        //{
-            /*outputCartesian.addString("movv");
-            outputCartesian.addDouble( 0 );
-            outputCartesian.addDouble( -0.05);
-            outputCartesian.addDouble( 0 );
-            outputCartesian.addDouble( 0 );
-            outputCartesian.addDouble( 0 );
-            outputCartesian.addDouble( 0 );*/
-            //Time::delay(1);
-        /*}
-        else if((coordY-0.05)<0.05){
-            printf("BOTTLE FALL left!! \n");
-        }*/
-    }
-    else //if(z>=88 && z<=92)
-    {
-        /*printf("THE BOTTLE IS IN EQUILIBRIUM \n");
-        outputCartesian.addString("movv");
-        outputCartesian.addDouble( 0 );
-        outputCartesian.addDouble( 0 );
-        outputCartesian.addDouble( 0 );
-        outputCartesian.addDouble( 0 );
-        outputCartesian.addDouble( 0 );
-        outputCartesian.addDouble( 0 );*/
-    }
+    //-- If out of limits, override Y axis movement. Starting pos is around 0.347
+    if( x[1] < 0.25 )
+        xdotd[1] = 0;
+
+    if( x[1] > 0.55 )
+        xdotd[1] = 0;
 
     //-- Compute joint velocity commands and send to robot.
     std::vector<double> commandQdot;
@@ -135,6 +117,7 @@ void InCvPort::onRead(Bottle& b) {
         CD_WARNING("velocityMove failed, not updating control this iteration.\n");
     }
 
+    return;
 }
 
 /************************************************************************/
