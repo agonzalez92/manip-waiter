@@ -16,7 +16,7 @@ void InCvPort::setFollow(int value)
 
 void InCvPort::onRead(Bottle& b) {
 
-//------------------------SET LEFT ARM INITIAL POSITION------------------------
+//------------------------SET right ARM INITIAL POSITION------------------------
     if (a==0)
     {
         iEncoders->getAxes(&numRobotJoints);
@@ -80,7 +80,7 @@ void InCvPort::onRead(Bottle& b) {
     if ( x[2] < 0.312769-0.001 )
         xdotd[2] = 0.01;
 */
-    if ( (angle >= 70) && (angle < 88) )  //Correction 01. Move arm Y left.
+    if ( (angle >= 70) && (angle < 88) )  //Correction 01. Move arm Y right.
     {
         if( x[1] > 0.25 )
             xdotd[1] = -0.05; // [1] corresponds to Y axis

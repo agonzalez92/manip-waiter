@@ -25,30 +25,30 @@ bool WaiterExecManip::configure(ResourceFinder &rf) {
     }
 
     //-- Robot device
-    Property leftArmOptions;
-    leftArmOptions.put("device","remote_controlboard");
+    Property rightArmOptions;
+    rightArmOptions.put("device","remote_controlboard");
     std::string localStr("/manipWaiterExecManip/");
     localStr += remote;
-    localStr += "/leftArm";
-    leftArmOptions.put("local",localStr);
+    localStr += "/rightArm";
+    rightArmOptions.put("local",localStr);
     std::string remoteStr("/");
     remoteStr += remote;
-    remoteStr += "/leftArm";
-    leftArmOptions.put("remote",remoteStr);
-    leftArmDevice.open(leftArmOptions);
-    if( ! leftArmDevice.isValid() ) {
-        printf("leftArm remote_controlboard instantiation not worked.\n");
+    remoteStr += "/rightArm";
+    rightArmOptions.put("remote",remoteStr);
+    rightArmDevice.open(rightArmOptions);
+    if( ! rightArmDevice.isValid() ) {
+        printf("rightArm remote_controlboard instantiation not worked.\n");
         return false;
     }
-    if( ! leftArmDevice.view(iEncoders) ) {
+    if( ! rightArmDevice.view(iEncoders) ) {
         printf("view(iEncoders) not worked.\n");
         return false;
     }
-    if( ! leftArmDevice.view(iPositionControl) ) {
+    if( ! rightArmDevice.view(iPositionControl) ) {
         printf("view(iPositionControl) not worked.\n");
         return false;
     }
-    if( ! leftArmDevice.view(iVelocityControl) ) {
+    if( ! rightArmDevice.view(iVelocityControl) ) {
         printf("view(iVelocityControl) not worked.\n");
         return false;
     }
@@ -106,7 +106,7 @@ bool WaiterExecManip::interruptModule() {
     inSrPort.close();
 
     solverDevice.close();
-    leftArmDevice.close();
+    rightArmDevice.close();
     return true;
 }
 
