@@ -24,7 +24,7 @@ void InCvPort::onRead(Bottle& b) {
 
         iPositionControl->setPositionMode();
         printf("begin MOVE TO START POSITION\n");
-        double initpos[7] = {-30,0,0,-90,0,30,0};
+        double initpos[7] = {30,0,0,90,0,-30,0};
         iPositionControl->positionMove(initpos);
         bool done = false;
         while( ! done )
