@@ -68,7 +68,7 @@ void InCvPort::onRead(Bottle& b) {
 
     //-- 0.526938 0.346914 0.312769 -1.0 0.000015 -0.000015 90.003044
 
-    if ( x[0] > 0.526938+0.001 )
+/*    if ( x[0] > 0.526938+0.001 )
         xdotd[0] = -0.01;
 
     if ( x[0] < 0.526938-0.001 )
@@ -79,7 +79,7 @@ void InCvPort::onRead(Bottle& b) {
 
     if ( x[2] < 0.312769-0.001 )
         xdotd[2] = 0.01;
-
+*/
     if ( (angle >= 70) && (angle < 88) )  //Correction 01. Move arm Y left.
     {
         if( x[1] > 0.25 )
@@ -121,6 +121,7 @@ void InCvPort::onRead(Bottle& b) {
         CD_DEBUG_NO_HEADER("%f ",commandQdot[i]);
     CD_DEBUG_NO_HEADER("[deg/s]\n");
 
+    commandQdot[0] = 0;
     if( ! iVelocityControl->velocityMove( commandQdot.data() ) )
     {
         CD_WARNING("velocityMove failed, not updating control this iteration.\n");
