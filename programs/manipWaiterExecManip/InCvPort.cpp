@@ -125,7 +125,7 @@ void InCvPort::onRead(Bottle& b) {
         CD_DEBUG_NO_HEADER("%f ",commandQdot[i]);
     CD_DEBUG_NO_HEADER("[deg/s]\n");
 
-    commandQdot[0] = 0;
+    commandQdot[0] = 0.1;
     if( ! iVelocityControl->velocityMove( commandQdot.data() ) )
     {
         CD_WARNING("velocityMove failed, not updating control this iteration.\n");
