@@ -82,13 +82,17 @@ void InCvPort::onRead(Bottle& b) {
 */
     if ( (angle >= 70) && (angle < 88) )  //Correction 01. Move arm Y right.
     {
-        if( x[1] > 0.25 )
+        if( x[1] > -0.45 )
             xdotd[1] = -0.05; // [1] corresponds to Y axis
+//        if( x[1] > 0.25 )
+//           xdotd[1] = -0.05; // [1] corresponds to Y axis
     }
     else if( (angle > 92) && (angle <= 110) )  //Correction 02. Move arm Y right.
     {
-        if( x[1] < 0.45 )
+        if( x[1] < -0.25 )
             xdotd[1] = 0.05; // [1] corresponds to Y axis
+//        if( x[1] < 0.45 )
+//            xdotd[1] = 0.05; // [1] corresponds to Y axis
     }
     else //if(z>=88 && z<=92)
     {
