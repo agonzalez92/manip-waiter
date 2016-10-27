@@ -8,18 +8,26 @@ namespace teo
 /************************************************************************/
 
 void InCvPort::onRead(Bottle& b) {
-    if ( ! follow ){
+/*    if ( ! follow ){
 	iVelocityControl->velocityMove(0, 0.0);
 	iVelocityControl->velocityMove(1, 0.0); 
 	return;
     }
-    if (b.size() < 3) return;
+    if (b.size() < 3) return;*/
 
     double x = b.get(0).asDouble();
     double y = b.get(1).asDouble();
     double z = b.get(2).asDouble();
 
+    printf("%f %f %f\n",x,y,z);
 
+    if( x > 325 ) iPositionControl->relativeMove(0, -1);
+    if( x < 315 ) iPositionControl->relativeMove(0, 1);
+    //
+    if( y > 145 ) iPositionControl->relativeMove(1, 1);
+    if( y < 135 ) iPositionControl->relativeMove(1, -1);
+
+ /*
     printf("%f %f %f\n",x,y,z);
 
     if( x > 215 ) {
@@ -73,7 +81,7 @@ void InCvPort::onRead(Bottle& b) {
     else if( y < 95 ) {
         iVelocityControl->velocityMove(1, -5.0);
     }
-
+*/
 }
 
 /************************************************************************/
