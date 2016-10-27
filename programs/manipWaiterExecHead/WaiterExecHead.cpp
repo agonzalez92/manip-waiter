@@ -42,14 +42,13 @@ bool WaiterExecHead::configure(ResourceFinder &rf) {
         return false;
     }
 
-//    yarp::dev::IVelocityControl *iVelocityControl;
-    if( ! headDevice.view(iVelocityControl) ) {
+    if( ! headDevice.view(iPositionControl) ) {
         printf("view(iVelocityControl) not worked.\n");
         return false;
     }
-    inCvPort.setIVelocityControl(iVelocityControl);
-    iVelocityControl->setVelocityMode();
-    inCvPort.setIVelocityControl(iVelocityControl);
+    inCvPort.setIPositionControl(iPositionControl);
+
+
     //-----------------OPEN LOCAL PORTS------------//
     inSrPort.setInCvPortPtr(&inCvPort);
     inCvPort.useCallback();
