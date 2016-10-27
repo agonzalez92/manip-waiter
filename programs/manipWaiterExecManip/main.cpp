@@ -39,7 +39,7 @@ int main(int argc, char **argv) {
     rf.setVerbose(true);
     rf.setDefaultContext("manipWaiterExecManip");
     //rf.setDefaultConfigFile("manipWaiterExecManip.ini");
-    rf.setDefaultConfigFile("/usr/local/share/teo/contexts/kinematics/rightArmKinematics.ini");
+    rf.setDefaultConfigFile("/usr/local/share/teo/contexts/kinematics/leftArmKinematics.ini");
     rf.configure(argc, argv);
 
     teo::WaiterExecManip mod;
