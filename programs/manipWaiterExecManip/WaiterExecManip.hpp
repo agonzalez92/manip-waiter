@@ -43,7 +43,7 @@ class WaiterExecManip : public RFModule {
         InCvPort inCvPort;
 
         //-- Robot device
-        yarp::dev::PolyDriver rightArmDevice;
+        yarp::dev::PolyDriver leftArmDevice;
         yarp::dev::IEncoders *iEncoders;
         yarp::dev::IPositionControl *iPositionControl;
         yarp::dev::IVelocityControl *iVelocityControl;
