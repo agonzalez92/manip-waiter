@@ -46,6 +46,7 @@ class WaiterExecManip : public RFModule {
         yarp::dev::PolyDriver leftArmDevice;
         yarp::dev::IEncoders *iEncoders;
         yarp::dev::IPositionControl *iPositionControl;
+        yarp::dev::IPositionDirect *iPositionDirect;
         yarp::dev::IVelocityControl *iVelocityControl;
 
         //-- Solver device

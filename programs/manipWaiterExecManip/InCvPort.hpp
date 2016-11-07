@@ -56,6 +56,9 @@ class InCvPort : public BufferedPort<Bottle> {
         void setIPositionControl(yarp::dev::IPositionControl *iPositionControl) {
             this->iPositionControl = iPositionControl;
         }
+        void setIPositionDirect(yarp::dev::IPositionDirect *iPositionDirect) {
+            this->iPositionDirect = iPositionDirect;
+        }
         void setIVelocityControl(yarp::dev::IVelocityControl *iVelocityControl) {
             this->iVelocityControl = iVelocityControl;
         }
@@ -75,6 +78,7 @@ class InCvPort : public BufferedPort<Bottle> {
         bool preprogrammedInitTrajectory();
 
         void strategyVelocity(Bottle& b);
+        void strategyPositionDirect(Bottle& b);
 
         /** Callback on incoming Bottle. **/
         virtual void onRead(Bottle& b);
@@ -82,6 +86,7 @@ class InCvPort : public BufferedPort<Bottle> {
         //-- Robot device
         yarp::dev::IEncoders *iEncoders;
         yarp::dev::IPositionControl *iPositionControl;
+        yarp::dev::IPositionDirect *iPositionDirect;
         yarp::dev::IVelocityControl *iVelocityControl;
 
         //-- Solver device

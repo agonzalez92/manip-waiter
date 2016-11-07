@@ -48,12 +48,17 @@ bool WaiterExecManip::configure(ResourceFinder &rf) {
         printf("view(iPositionControl) not worked.\n");
         return false;
     }
+    if( ! leftArmDevice.view(iPositionDirect) ) {
+        printf("view(iPositionDirect) not worked.\n");
+        return false;
+    }
     if( ! leftArmDevice.view(iVelocityControl) ) {
         printf("view(iVelocityControl) not worked.\n");
         return false;
     }
     inCvPort.setIEncodersControl(iEncoders);
     inCvPort.setIPositionControl(iPositionControl);
+    inCvPort.setIPositionDirect(iPositionDirect);
     inCvPort.setIVelocityControl(iVelocityControl);
 
     //-- Robot device
