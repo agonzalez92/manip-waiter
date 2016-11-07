@@ -52,6 +52,13 @@ void InCvPort::strategyPositionDirect(Bottle& b)
         return;
     }
 
+    //-- Obtain current cartesian position
+    std::vector<double> currentX;
+    if ( ! iCartesianSolver->fwdKin(currentQ,currentX) )
+    {
+        CD_ERROR("fwdKin failed.\n");
+    }
+
     std::vector<double> xd, qd;
 
     //-- 0.526938 0.346914 0.312769 -1.0 0.000015 -0.000015 90.003044
