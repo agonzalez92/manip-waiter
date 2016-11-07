@@ -13,16 +13,27 @@ void InCvPort::setFollow(int value)
 
 /************************************************************************/
 
-
 void InCvPort::onRead(Bottle& b) {
 
+    std::string strategy = DEFAULT_STRATEGY;
+
+    if(strategy == "velocity")
+        strategyVelocity(b);
+    else
+        CD_ERROR("Unknown strategy!!!\n");
+
+}
+
+/************************************************************************/
+
+void InCvPort::strategyVelocity(Bottle& b)
+{
     if (a==0)
     {
         preprogrammedInitTrajectory();
+        iVelocityControl->setVelocityMode();
         a=1;
     }
-
-    iVelocityControl->setVelocityMode();
 
     //-------------------READING INPUT MESSAGES FROM VISION SENSOR--------------------
     //double x = b.get(0).asDouble(); //Data pxXpos

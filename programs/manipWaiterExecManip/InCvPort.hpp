@@ -28,6 +28,8 @@
 
 #define DEFAULT_QDOT_LIMIT 10
 
+#define DEFAULT_STRATEGY "velocity"
+
 using namespace yarp::os;
 
 namespace teo
@@ -71,6 +73,8 @@ class InCvPort : public BufferedPort<Bottle> {
 
         /** SET right ARM INITIAL POSITION */
         bool preprogrammedInitTrajectory();
+
+        void strategyVelocity(Bottle& b);
 
         /** Callback on incoming Bottle. **/
         virtual void onRead(Bottle& b);
