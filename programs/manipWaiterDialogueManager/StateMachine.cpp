@@ -125,6 +125,7 @@ void StateMachine::setOutTtsPort(yarp::os::Port* outTtsPort) {
 
 bool StateMachine::setLanguage(std::string language) {
     int z = 1;
+    int X = 1;
     if("english" == language)
     {
         //-- recognition sentences
@@ -159,18 +160,32 @@ bool StateMachine::setLanguage(std::string language) {
         repeat = std::string("Puede grepetirlo."); //state 0
         hello = std::string("Hola, me yamo TEO y soy un grobot camarero."); //state 2
 
-        if (z == 1){
+        if (X == 1){
             drink = std::string("Mi especialidad es servir cervezas bien fresquitas. Quiere una cerveza."); //state 3
-            take = std::string("Aqui tiene su botella."); //state 4
+            X = 2;
+        }
+        if (X == 2){
+            drink = std::string("Tambien puede ofrecerle otras bebidads. Que le apetece."); //state 3
+            X = 3;
+        }
+        if (X == 3){
+            drink = std::string("Mi especialidad es servir cervezas bien fresquitas. Quiere una cerveza."); //state 3
+            X = 1;
+        }
+        if (z == 1){
+            take = std::string("Por favor, sirvase."); //state 4
             z = 2;
         }
         if (z == 2){
-            drink = std::string("Tambien puede ofrecerle otras bebidads. Que le apetece."); //state 3
-            take = std::string("Por favor, sirvase."); //state 4
+            take = std::string("Por supuesto, Aqui tiene su botella."); //state 4
+            z = 3;
+        }
+        if (z == 3){
+            take = std::string("Espero que este a su agrado."); //state 4
             z = 1;
         }
 
-        finish = std::string("Nos vemos pronto."); //state 5
+        finish = std::string("De acuerdo. Nos vemos pronto."); //state 5
 
         return true;
     }
