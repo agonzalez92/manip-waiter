@@ -28,7 +28,7 @@
 
 #define DEFAULT_QDOT_LIMIT 10
 
-#define DEFAULT_STRATEGY "velocity"
+#define DEFAULT_STRATEGY "positionDirect"
 
 using namespace yarp::os;
 
