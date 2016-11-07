@@ -16,29 +16,13 @@ void InCvPort::setFollow(int value)
 
 void InCvPort::onRead(Bottle& b) {
 
-//------------------------SET right ARM INITIAL POSITION------------------------
     if (a==0)
     {
-        iEncoders->getAxes(&numRobotJoints);
-        CD_INFO("numRobotJoints: %d.\n",numRobotJoints);
-
-        iPositionControl->setPositionMode();
-        printf("begin MOVE TO START POSITION\n");
-        double initpos[7] = {-30,0,0,-90,0,30,0};
-        iPositionControl->positionMove(initpos);
-        bool done = false;
-        while( ! done )
-        {
-            yarp::os::Time::delay(0.5);
-            iPositionControl->checkMotionDone(&done);
-            printf(".");
-            fflush(stdout);
-        }
-        printf("end MOVE TO START POSITION\n");
-        iVelocityControl->setVelocityMode();
+        preprogrammedInitTrajectory();
         a=1;
     }
 
+    iVelocityControl->setVelocityMode();
 
     //-------------------READING INPUT MESSAGES FROM VISION SENSOR--------------------
     //double x = b.get(0).asDouble(); //Data pxXpos
@@ -132,6 +116,29 @@ void InCvPort::onRead(Bottle& b) {
     }
 
     return;
+}
+
+/************************************************************************/
+
+bool InCvPort::preprogrammedInitTrajectory()
+{
+    iEncoders->getAxes(&numRobotJoints);
+    CD_INFO("numRobotJoints: %d.\n",numRobotJoints);
+
+    iPositionControl->setPositionMode();
+    printf("begin MOVE TO START POSITION\n");
+    double initpos[7] = {-30,0,0,-90,0,30,0};
+    iPositionControl->positionMove(initpos);
+    bool done = false;
+    while( ! done )
+    {
+        yarp::os::Time::delay(0.5);
+        iPositionControl->checkMotionDone(&done);
+        printf(".");
+        fflush(stdout);
+    }
+    printf("end MOVE TO START POSITION\n");
+    return true;
 }
 
 /************************************************************************/

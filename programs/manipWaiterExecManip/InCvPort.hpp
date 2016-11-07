@@ -69,6 +69,9 @@ class InCvPort : public BufferedPort<Bottle> {
         int a;
         int numRobotJoints;
 
+        /** SET right ARM INITIAL POSITION */
+        bool preprogrammedInitTrajectory();
+
         /** Callback on incoming Bottle. **/
         virtual void onRead(Bottle& b);
 
