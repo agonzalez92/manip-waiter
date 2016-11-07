@@ -33,7 +33,7 @@ void InCvPort::strategyPositionDirect(Bottle& b)
     if (a==0)
     {
         preprogrammedInitTrajectory();
-        iVelocityControl->setVelocityMode();
+        iPositionDirect->setPositionDirectMode();
         a=1;
     }
 
@@ -52,20 +52,11 @@ void InCvPort::strategyPositionDirect(Bottle& b)
         return;
     }
 
-    std::vector<double> x;
-
-    //-- Perform forward kinematics to obtain cartesian position
-    if ( ! iCartesianSolver->fwdKin(currentQ,x) )
-    {
-        CD_ERROR("fwdKin failed.\n");
-        return;
-    }
-
-    std::vector<double> xdotd(6, 0.0);
+    std::vector<double> xd, qd;
 
     //-- 0.526938 0.346914 0.312769 -1.0 0.000015 -0.000015 90.003044
 
-/*    if ( x[0] > 0.526938+0.001 )
+    /*if ( x[0] > 0.526938+0.001 )
         xdotd[0] = -0.01;
 
     if ( x[0] < 0.526938-0.001 )
@@ -76,7 +67,7 @@ void InCvPort::strategyPositionDirect(Bottle& b)
 
     if ( x[2] < 0.312769-0.001 )
         xdotd[2] = 0.01;
-*/
+
     if ( (angle >= 70) && (angle < 88) )  //Correction 01. Move arm Y right.
     {
         if( x[1] > -0.45 )
@@ -94,38 +85,16 @@ void InCvPort::strategyPositionDirect(Bottle& b)
     else //if(z>=88 && z<=92)
     {
         printf("THE BOTTLE IS IN EQUILIBRIUM \n");
+    }*/
+
+    if ( ! iCartesianSolver->invKin(xd,currentQ,qd) )
+    {
+        CD_ERROR("invKin failed.\n");
     }
 
-    //-- Compute joint velocity commands and send to robot.
-    std::vector<double> commandQdot;
-    if (! iCartesianSolver->diffInvKin(currentQ,xdotd,commandQdot) )
+    if( ! iPositionDirect->setPositions( qd.data()) );
     {
-        CD_WARNING("diffInvKin failed, not updating control this iteration.\n");
-        return;
-    }
-
-    for(int i=0;i<commandQdot.size();i++)
-    {
-        if( fabs(commandQdot[i]) > DEFAULT_QDOT_LIMIT)
-        {
-            CD_ERROR("diffInvKin too dangerous, STOP!!!.\n");
-            for(int i=0;i<commandQdot.size();i++)
-                commandQdot[i] = 0;
-        }
-    }
-
-    CD_DEBUG_NO_HEADER("[MOVV] ");
-    for(int i=0;i<6;i++)
-        CD_DEBUG_NO_HEADER("%f ",xdotd[i]);
-    CD_DEBUG_NO_HEADER("-> ");
-    for(int i=0;i<numRobotJoints;i++)
-        CD_DEBUG_NO_HEADER("%f ",commandQdot[i]);
-    CD_DEBUG_NO_HEADER("[deg/s]\n");
-
-    commandQdot[0] = 0.1;
-    if( ! iVelocityControl->velocityMove( commandQdot.data() ) )
-    {
-        CD_WARNING("velocityMove failed, not updating control this iteration.\n");
+        CD_WARNING("setPositions failed, not updating control this iteration.\n");
     }
 
     return;
