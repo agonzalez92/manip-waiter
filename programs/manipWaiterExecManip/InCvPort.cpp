@@ -75,6 +75,10 @@ void InCvPort::strategyPositionDirect(Bottle& b)
         else if(( currentX[1] - 0.02 ) < 0.25 )
         {
             printf("BOTTLE FALL left!! \n");
+            if( ! iPositionControl->positionMove( currentQ.data() ))
+            {
+                CD_WARNING("setPositions failed, not updating control this iteration.\n");
+            }
             return;
         }
 
@@ -89,12 +93,20 @@ void InCvPort::strategyPositionDirect(Bottle& b)
                 else if(( currentX[1] + 0.02 ) > 0.45 )
                 {
                     printf("BOTTLE FALL right!! \n");
+                    if( ! iPositionControl->positionMove( currentQ.data() ))
+                    {
+                        CD_WARNING("setPositions failed, not updating control this iteration.\n");
+                    }
                     return;
         }
 
     }
     else{      //if(z>=88 && z<=92)
         printf("THE BOTTLE IS IN EQUILIBRIUM \n");
+        if( ! iPositionControl->positionMove( currentQ.data() ))
+        {
+            CD_WARNING("setPositions failed, not updating control this iteration.\n");
+        }
         return;
     }
 
