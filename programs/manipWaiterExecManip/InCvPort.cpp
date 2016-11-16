@@ -20,7 +20,7 @@ void InCvPort::onRead(Bottle& b) {
     if(strategy == "velocity")
         strategyVelocity(b);
     else if(strategy == "positionDirect")
-        strategyVelocity(b);
+        strategyPositionDirect(b);
     else
         CD_ERROR("Unknown strategy!!!\n");
 
@@ -33,7 +33,8 @@ void InCvPort::strategyPositionDirect(Bottle& b)
     if (a==0)
     {
         preprogrammedInitTrajectory();
-        iPositionDirect->setPositionDirectMode();
+        //iPositionDirect->setPositionDirectMode();
+        iPositionControl->setPositionMode();
         a=1;
     }
 
@@ -60,46 +61,47 @@ void InCvPort::strategyPositionDirect(Bottle& b)
     }
 
     std::vector<double> xd, qd;
-
-    //-- 0.526938 0.346914 0.312769 -1.0 0.000015 -0.000015 90.003044
-
-    /*if ( x[0] > 0.526938+0.001 )
-        xdotd[0] = -0.01;
-
-    if ( x[0] < 0.526938-0.001 )
-        xdotd[0] = 0.01;
-
-    if ( x[2] > 0.312769+0.001 )
-        xdotd[2] = -0.01;
-
-    if ( x[2] < 0.312769-0.001 )
-        xdotd[2] = 0.01;
+    xd = currentX;
 
     if ( (angle >= 70) && (angle < 88) )  //Correction 01. Move arm Y right.
     {
-        if( x[1] > -0.45 )
-            xdotd[1] = -0.05; // [1] corresponds to Y axis
-//        if( x[1] > 0.25 )
-//           xdotd[1] = -0.05; // [1] corresponds to Y axis
+        if(( currentX[1] - 0.02 ) >= 0.25 )
+        {
+            printf("THE BOTTLE GOES LEFT \n");
+            xd[1] = currentX[1] - 0.02;
+        }
+        else if(( currentX[1] - 0.02 ) < 0.25 )
+        {
+            printf("BOTTLE FALL left!! \n");
+        }
+
     }
     else if( (angle > 92) && (angle <= 110) )  //Correction 02. Move arm Y right.
     {
-        if( x[1] < -0.25 )
-            xdotd[1] = 0.05; // [1] corresponds to Y axis
-//        if( x[1] < 0.45 )
-//            xdotd[1] = 0.05; // [1] corresponds to Y axis
-    }
-    else //if(z>=88 && z<=92)
-    {
-        printf("THE BOTTLE IS IN EQUILIBRIUM \n");
-    }*/
+        if(( currentX[1] + 0.02 ) <= 0.45 )
+                {
+                    printf("THE BOTTLE GOES RIGHT \n");
+                    xd[1] = currentX[1] + 0.02;
+                }
+                else if(( currentX[1] + 0.02 ) > 0.45 )
+                {
+                    printf("BOTTLE FALL right!! \n");
+        }
 
-    if ( ! iCartesianSolver->invKin(xd,currentQ,qd) )
-    {
+    }
+    else{      //if(z>=88 && z<=92)
+        printf("THE BOTTLE IS IN EQUILIBRIUM \n");
+    }
+
+    if ( ! iCartesianSolver->invKin(xd,currentQ,qd) ){
         CD_ERROR("invKin failed.\n");
     }
 
-    if( ! iPositionDirect->setPositions( qd.data()) );
+    printf("currentQ ---> %f \n", currentQ[1]);
+    printf("qd ----- ---> %f \n", qd[1]);
+
+    //if( ! iPositionDirect->setPositions( qd.data() ))
+    if( ! iPositionControl->positionMove( qd.data() ))
     {
         CD_WARNING("setPositions failed, not updating control this iteration.\n");
     }
@@ -117,6 +119,8 @@ void InCvPort::strategyVelocity(Bottle& b)
         iVelocityControl->setVelocityMode();
         a=1;
     }
+
+
 
     //-------------------READING INPUT MESSAGES FROM VISION SENSOR--------------------
     //double x = b.get(0).asDouble(); //Data pxXpos

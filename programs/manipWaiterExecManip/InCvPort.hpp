@@ -15,6 +15,7 @@
 #include "ICartesianSolver.h"
 
 #include "ColorDebug.hpp"
+#include <yarp/dev/IPositionDirect.h>
 
 //instrucciones para el followme
 #define VOCAB_FOLLOW_ME VOCAB4('f','o','l','l')
@@ -29,6 +30,8 @@
 #define DEFAULT_QDOT_LIMIT 10
 
 #define DEFAULT_STRATEGY "positionDirect"
+//#define DEFAULT_STRATEGY "velocity"
+
 
 using namespace yarp::os;
 
