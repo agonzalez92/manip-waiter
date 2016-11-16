@@ -75,6 +75,7 @@ void InCvPort::strategyPositionDirect(Bottle& b)
         else if(( currentX[1] - 0.02 ) < 0.25 )
         {
             printf("BOTTLE FALL left!! \n");
+            return;
         }
 
     }
@@ -88,11 +89,13 @@ void InCvPort::strategyPositionDirect(Bottle& b)
                 else if(( currentX[1] + 0.02 ) > 0.45 )
                 {
                     printf("BOTTLE FALL right!! \n");
+                    return;
         }
 
     }
     else{      //if(z>=88 && z<=92)
         printf("THE BOTTLE IS IN EQUILIBRIUM \n");
+        return;
     }
 
     currentX[3] = -1;
