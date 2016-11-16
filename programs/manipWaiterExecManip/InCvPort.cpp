@@ -45,6 +45,8 @@ void InCvPort::strategyPositionDirect(Bottle& b)
 
     //------------------------CONTROL------------------------
 
+    //-- 0.526938 0.346914 0.312769 -1.0 0.000015 -0.000015 90.003044
+
     //-- Obtain current joint position
     std::vector<double> currentQ(numRobotJoints);
     if ( ! iEncoders->getEncoders( currentQ.data() ) )
@@ -92,6 +94,11 @@ void InCvPort::strategyPositionDirect(Bottle& b)
     else{      //if(z>=88 && z<=92)
         printf("THE BOTTLE IS IN EQUILIBRIUM \n");
     }
+
+    currentX[3] = -1;
+    currentX[4] = 0;
+    currentX[5] = 0;
+    currentX[6] = 90;
 
     if ( ! iCartesianSolver->invKin(xd,currentQ,qd) ){
         CD_ERROR("invKin failed.\n");
