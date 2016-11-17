@@ -49,69 +49,220 @@ void InCvPort::strategyPositionDirect(Bottle& b)
 
     //-- Obtain current joint position
 
+    //----- Obtain current joint position ---------------
     std::vector<double> currentQ(numRobotJoints);
-    std::vector<double> beforeQ(numRobotJoints);
-    beforeQ = currentQ;
+    std::vector<double> desireQ(numRobotJoints);
 
-    if ( ! iEncoders->getEncoders( currentQ.data() ) )
-    {
+    if ( ! iEncoders->getEncoders( currentQ.data() ) )    {
         CD_WARNING("getEncoders failed, not updating control this iteration.\n");
         return;
     }
+    //---------------------------------------------------
 
-    //-- Obtain current cartesian position
+
+    //------ Obtain current cartesian position ----------
     std::vector<double> currentX;
-    if ( ! iCartesianSolver->fwdKin(currentQ,currentX) )
-    {
+    if ( ! iCartesianSolver->fwdKin(currentQ,currentX) )    {
         CD_ERROR("fwdKin failed.\n");
     }
+    //---------------------------------------------------
 
-    std::vector<double> xd, qd;
-    xd = currentX;
 
-    if ( (angle >= 70) && (angle < 88) )  //Correction 01. Move arm Y right.
-    {
-        if(( currentX[1] - 0.02 ) >= 0.25 )
-        {
-            printf("THE BOTTLE GOES LEFT \n");
-            xd[1] = currentX[1] - 0.02;
+    std::vector<double> desireX;
+
+    desireX = currentX; // 6 = 6
+
+    if ( (angle >= 70) && (angle < 88) )    {   //Correction 01. Move arm Y right.
+        if( currentX[1] >= 0.25 )        {
+            printf("THE BOTTLE GOES RIGHT \n");
+            desireX[1] = currentX[1] - 0.02;
+            pepinito = 1;
         }
-        else if(( currentX[1] - 0.02 ) < 0.25 )
-        {
-            printf("BOTTLE FALL left!! \n");
-            if( ! iPositionControl->positionMove( beforeQ.data() ))
-            {
-                CD_WARNING("setPositions failed, not updating control this iteration.\n");
-            }
+        else if( currentX[1] < 0.25 )        {
+            printf("¡¡¡ BOTTLE FALL RIGHT !!! \n");
             return;
-        }
+            desireX[1] = 0.346914;
+            pepinito = 3;
 
+
+            //if( ! iPositionControl->positionMove( beforeQ.data() ))            {
+            //    CD_WARNING("setPositions failed, not updating control this iteration.\n");
+            //}
+            // beforeQ = currentQ; ???? por confirmar
+            //return;
+        }
     }
-    else if( (angle > 92) && (angle <= 110) )  //Correction 02. Move arm Y right.
-    {
-        if(( currentX[1] + 0.02 ) <= 0.45 )
-                {
-                    printf("THE BOTTLE GOES RIGHT \n");
-                    xd[1] = currentX[1] + 0.02;
-                }
-                else if(( currentX[1] + 0.02 ) > 0.45 )
-                {
-                    printf("BOTTLE FALL right!! \n");
-                    if( ! iPositionControl->positionMove( beforeQ.data() ))
-                    {
-                        CD_WARNING("setPositions failed, not updating control this iteration.\n");
-                    }
-                    return;
+    else if( (angle > 92) && (angle <= 110) )    {   //Correction 02. Move arm Y left.
+        if( currentX[1] <= 0.45 )        {
+             printf("THE BOTTLE GOES LEFT \n");
+             desireX[1] = currentX[1] + 0.02;
+             pepinito = 1;
         }
+        else if( currentX[1] > 0.45 )                {
+             printf("¡¡¡ BOTTLE FALL LEFT !!! \n");
+             return;
+             desireX[1] = 0.346914;
+             pepinito = 3;
 
+
+             //if( ! iPositionControl->positionMove( beforeQ.data() ))                    {
+             //    CD_WARNING("setPositions failed, not updating control this iteration.\n");
+             //}
+             // beforeQ = currentQ; ???? por confirmar
+             //return;
+        }
     }
     else{      //if(z>=88 && z<=92)
         printf("THE BOTTLE IS IN EQUILIBRIUM \n");
-        if( ! iPositionControl->positionMove( beforeQ.data() ))
-        {
+        return;
+        desireX[1] = 0.346914;
+        pepinito = 3;
+
+
+        //if( ! iPositionControl->positionMove( beforeQ.data() ))        {
+        //    CD_WARNING("setPositions failed, not updating control this iteration.\n");
+        //}
+        // beforeQ = currentQ; ???? por confirmar
+        //return;
+    }
+    desireX[0] = 0.526938;
+    desireX[2] = 0.312769;
+    desireX[3] = -1;
+    desireX[4] = 0;
+    desireX[5] = 0;
+    desireX[6] = 90;
+
+    if ( ! iCartesianSolver->invKin(desireX,currentQ,desireQ) ){
+        CD_ERROR("invKin failed.\n");
+    }
+
+    CD_DEBUG_NO_HEADER("[currentX]");
+    for(int i=0;i<numRobotJoints;i++)
+        CD_DEBUG_NO_HEADER("%f ",currentX[i]);
+    CD_DEBUG_NO_HEADER("\n ");
+    CD_DEBUG_NO_HEADER("[desireX]");
+    for(int i=0;i<numRobotJoints;i++)
+        CD_DEBUG_NO_HEADER("%f ",desireX[i]);
+    CD_DEBUG_NO_HEADER("\n ");
+
+    //--------------------------------------------------------------
+/*
+    CD_DEBUG_NO_HEADER("[beforeQ]");
+    for(int i=0;i<numRobotJoints;i++)
+        CD_DEBUG_NO_HEADER("%f ",currentQ[i]);
+    CD_DEBUG_NO_HEADER("\n ");
+    CD_DEBUG_NO_HEADER("[currentQ]");
+    for(int i=0;i<numRobotJoints;i++)
+        CD_DEBUG_NO_HEADER("%f ",currentQ[i]);
+    CD_DEBUG_NO_HEADER("\n ");
+    CD_DEBUG_NO_HEADER("[desireQ]");
+    for(int i=0;i<numRobotJoints;i++)
+        CD_DEBUG_NO_HEADER("%f ",desireQ[i]);
+    CD_DEBUG_NO_HEADER("\n");
+*/
+    switch (pepinito) {
+    case 1:
+        if( ! iPositionControl->positionMove( desireQ.data() ))        {
             CD_WARNING("setPositions failed, not updating control this iteration.\n");
         }
+        break;
+    case 2:
+        if( ! iPositionControl->positionMove( currentQ.data() ))        {
+            CD_WARNING("setPositions failed, not updating control this iteration.\n");
+        }
+        break;
+    case 3:
+        currentQ=std::vector<double>(initpos);
+        /*
+        iPositionControl->positionMove(0, -30);
+        iPositionControl->positionMove(1, 0);
+        iPositionControl->positionMove(2, 0);
+        iPositionControl->positionMove(3, -90);
+        iPositionControl->positionMove(4, 0);
+        iPositionControl->positionMove(5, 30);
+        iPositionControl->positionMove(6, 0);
+        */
+        if( ! iPositionControl->positionMove( currentQ.data() ))        {
+            CD_WARNING("setPositions failed, not updating control this iteration.\n");
+        }
+        break;
+    default:
+        break;
+    }
+
+    //beforeQ = currentQ;
+
+    return;
+
+
+/*
+    //----- Obtain current joint position ---------------
+    std::vector<double> currentQ(numRobotJoints);
+    std::vector<double> desireQ(numRobotJoints);
+
+    if ( ! iEncoders->getEncoders( currentQ.data() ) )    {
+        CD_WARNING("getEncoders failed, not updating control this iteration.\n");
         return;
+    }
+    //---------------------------------------------------
+
+
+    //------ Obtain current cartesian position ----------
+    std::vector<double> currentX;
+    if ( ! iCartesianSolver->fwdKin(currentQ,currentX) )    {
+        CD_ERROR("fwdKin failed.\n");
+    }
+    //---------------------------------------------------
+
+
+    std::vector<double> desireX;
+
+    desireX = currentX; // 6 = 6
+
+    if ( (angle >= 70) && (angle < 88) )    {   //Correction 01. Move arm Y right.
+        if(( currentX[1] - 0.02 ) >= 0.25 )        {
+            printf("THE BOTTLE GOES RIGHT \n");
+            desireX[1] = currentX[1] - 0.02;
+        }
+        else if(( currentX[1] - 0.02 ) < 0.25 )        {
+            printf("¡¡¡ BOTTLE FALL RIGHT !!! \n");
+            currentQ = beforeQ;
+
+
+            //if( ! iPositionControl->positionMove( beforeQ.data() ))            {
+            //    CD_WARNING("setPositions failed, not updating control this iteration.\n");
+            //}
+            // beforeQ = currentQ; ???? por confirmar
+            //return;
+        }
+    }
+    else if( (angle > 92) && (angle <= 110) )    {   //Correction 02. Move arm Y left.
+        if(( currentX[1] + 0.02 ) <= 0.45 )        {
+             printf("THE BOTTLE GOES LEFT \n");
+             desireX[1] = currentX[1] + 0.02;
+        }
+        else if(( currentX[1] + 0.02 ) > 0.45 )                {
+             printf("¡¡¡ BOTTLE FALL LEFT !!! \n");
+             currentQ = beforeQ;
+
+
+             //if( ! iPositionControl->positionMove( beforeQ.data() ))                    {
+             //    CD_WARNING("setPositions failed, not updating control this iteration.\n");
+             //}
+             // beforeQ = currentQ; ???? por confirmar
+             //return;
+        }
+    }
+    else{      //if(z>=88 && z<=92)
+        printf("THE BOTTLE IS IN EQUILIBRIUM \n");
+        currentQ = beforeQ;
+
+
+        //if( ! iPositionControl->positionMove( beforeQ.data() ))        {
+        //    CD_WARNING("setPositions failed, not updating control this iteration.\n");
+        //}
+        // beforeQ = currentQ; ???? por confirmar
+        //return;
     }
 
     currentX[3] = -1;
@@ -119,20 +270,47 @@ void InCvPort::strategyPositionDirect(Bottle& b)
     currentX[5] = 0;
     currentX[6] = 90;
 
-    if ( ! iCartesianSolver->invKin(xd,currentQ,qd) ){
+    if ( ! iCartesianSolver->invKin(desireX,currentQ,desireQ) ){
         CD_ERROR("invKin failed.\n");
     }
 
-    printf("currentQ ---> %f \n", currentQ[1]);
-    printf("qd ----- ---> %f \n", qd[1]);
+    CD_DEBUG_NO_HEADER("[beforeQ]");
+    for(int i=0;i<6;i++)
+        CD_DEBUG_NO_HEADER("%f ",currentQ[i]);
+    CD_DEBUG_NO_HEADER("\n ");
+    CD_DEBUG_NO_HEADER("[currentQ]");
+    for(int i=0;i<6;i++)
+        CD_DEBUG_NO_HEADER("%f ",currentQ[i]);
+    CD_DEBUG_NO_HEADER("\n ");
+    CD_DEBUG_NO_HEADER("[desireQ]");
+    for(int i=0;i<numRobotJoints;i++)
+        CD_DEBUG_NO_HEADER("%f ",desireQ[i]);
+    CD_DEBUG_NO_HEADER("\n");
 
-    //if( ! iPositionDirect->setPositions( qd.data() ))
-    if( ! iPositionControl->positionMove( qd.data() ))
+    //if( ! iPositionDirect->setPositions( desireQ.data() ))
+    if( ! iPositionControl->positionMove( desireQ.data() ))
     {
         CD_WARNING("setPositions failed, not updating control this iteration.\n");
     }
+    beforeQ = currentQ;
 
     return;
+    */
+/*
+ * //-----------print example---------------------
+ *
+    CD_DEBUG_NO_HEADER("[MOVL] [%f] ",movementTime);
+    for(int i=0;i<6;i++)
+        CD_DEBUG_NO_HEADER("%f ",commandXdot[i]);
+    CD_DEBUG_NO_HEADER("-> ");
+    for(int i=0;i<numRobotJoints;i++)
+        CD_DEBUG_NO_HEADER("%f ",commandQdot[i]);
+    CD_DEBUG_NO_HEADER("[deg/s]\n");
+*/
+
+
+
+
 }
 
 /************************************************************************/
@@ -262,6 +440,14 @@ bool InCvPort::preprogrammedInitTrajectory()
         fflush(stdout);
     }
     printf("end MOVE TO START POSITION\n");
+
+    //----- designate initial position ---------------
+    std::vector<double> beforeQ(numRobotJoints);
+    if ( ! iEncoders->getEncoders( beforeQ.data() ) )    {
+        CD_WARNING("getEncoders failed, not updating control this iteration.\n");
+        return false;
+    }
+    yarp::os::Time::delay(1);
     return true;
 }
 
