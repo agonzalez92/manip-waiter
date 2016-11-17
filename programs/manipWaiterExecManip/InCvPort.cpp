@@ -48,7 +48,11 @@ void InCvPort::strategyPositionDirect(Bottle& b)
     //-- 0.526938 0.346914 0.312769 -1.0 0.000015 -0.000015 90.003044
 
     //-- Obtain current joint position
+
     std::vector<double> currentQ(numRobotJoints);
+    std::vector<double> beforeQ(numRobotJoints);
+    beforeQ = currentQ;
+
     if ( ! iEncoders->getEncoders( currentQ.data() ) )
     {
         CD_WARNING("getEncoders failed, not updating control this iteration.\n");
@@ -75,7 +79,7 @@ void InCvPort::strategyPositionDirect(Bottle& b)
         else if(( currentX[1] - 0.02 ) < 0.25 )
         {
             printf("BOTTLE FALL left!! \n");
-            if( ! iPositionControl->positionMove( currentQ.data() ))
+            if( ! iPositionControl->positionMove( beforeQ.data() ))
             {
                 CD_WARNING("setPositions failed, not updating control this iteration.\n");
             }
@@ -93,7 +97,7 @@ void InCvPort::strategyPositionDirect(Bottle& b)
                 else if(( currentX[1] + 0.02 ) > 0.45 )
                 {
                     printf("BOTTLE FALL right!! \n");
-                    if( ! iPositionControl->positionMove( currentQ.data() ))
+                    if( ! iPositionControl->positionMove( beforeQ.data() ))
                     {
                         CD_WARNING("setPositions failed, not updating control this iteration.\n");
                     }
@@ -103,7 +107,7 @@ void InCvPort::strategyPositionDirect(Bottle& b)
     }
     else{      //if(z>=88 && z<=92)
         printf("THE BOTTLE IS IN EQUILIBRIUM \n");
-        if( ! iPositionControl->positionMove( currentQ.data() ))
+        if( ! iPositionControl->positionMove( beforeQ.data() ))
         {
             CD_WARNING("setPositions failed, not updating control this iteration.\n");
         }
