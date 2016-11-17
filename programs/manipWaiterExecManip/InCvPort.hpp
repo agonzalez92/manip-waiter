@@ -51,6 +51,7 @@ class InCvPort : public BufferedPort<Bottle> {
         {
             follow = 0;
             a = 0;
+            pepinito = 1;
         }
 
         void setIEncodersControl(yarp::dev::IEncoders *iEncoders) {
@@ -76,8 +77,13 @@ class InCvPort : public BufferedPort<Bottle> {
         int follow;
         int a;
         int numRobotJoints;
+        int pepinito;
+        double initpos;
 
-        /** SET right ARM INITIAL POSITION */
+        std::vector<double> currentQ;
+        std::vector<double> beforeQ;
+
+        /** SET left ARM INITIAL POSITION */
         bool preprogrammedInitTrajectory();
 
         void strategyVelocity(Bottle& b);
