@@ -8,6 +8,19 @@ namespace teo
 /************************************************************************/
 
 void InCvPort::onRead(Bottle& b) {
+
+
+    if (a==0)    {
+        // ----- set NEW ref speed ---------------
+        double initspe[2] = {100.0,100.0};
+        iPositionControl->setRefSpeeds(initspe);
+
+        // ----- set NEW ref accelaration ---------------
+        double initacc[2] = {100.0,100.0};
+        iPositionControl->setRefAccelerations(initacc);
+        a=1;
+    }
+
 /*    if ( ! follow ){
 	iVelocityControl->velocityMove(0, 0.0);
 	iVelocityControl->velocityMove(1, 0.0); 
@@ -89,6 +102,7 @@ void InCvPort::onRead(Bottle& b) {
 void InCvPort::setFollow(bool value)
 {
     follow = value;
+    a = 0;
 }
 
 /************************************************************************/
