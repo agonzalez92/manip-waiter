@@ -47,8 +47,7 @@ namespace teo
 class InCvPort : public BufferedPort<Bottle> {
     public:
 
-        InCvPort()
-        {
+        InCvPort()        {
             follow = 0;
             a = 0;
             pepinito = 1;
@@ -83,10 +82,13 @@ class InCvPort : public BufferedPort<Bottle> {
         std::vector<double> currentQ;
         std::vector<double> beforeQ;
 
-        /** SET left ARM INITIAL POSITION */
+        /** SET left ARM INITIAL POSITION **/
         bool preprogrammedInitTrajectory();
 
+        /** left ARM CONTROL WITH A VELOCITY STRATEGY **/
         void strategyVelocity(Bottle& b);
+
+        /** left ARM CONTROL WITH A POSITION STRATEGY **/
         void strategyPositionDirect(Bottle& b);
 
         /** Callback on incoming Bottle. **/
