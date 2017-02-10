@@ -36,43 +36,45 @@ bool WaiterExecManip::configure(ResourceFinder &rf) {
     remoteStr += "/leftArm";
     leftArmOptions.put("remote",remoteStr);
     leftArmDevice.open(leftArmOptions);
-    if( ! leftArmDevice.isValid() ) {
+
+    if( ! leftArmDevice.isValid() )    {
         printf("leftArm remote_controlboard instantiation not worked.\n");
         return false;
     }
-    if( ! leftArmDevice.view(iEncoders) ) {
+    if( ! leftArmDevice.view(iEncoders) )    {
         printf("view(iEncoders) not worked.\n");
         return false;
     }
-    if( ! leftArmDevice.view(iPositionControl) ) {
+    if( ! leftArmDevice.view(iPositionControl) )    {
         printf("view(iPositionControl) not worked.\n");
         return false;
     }
-    if( ! leftArmDevice.view(iPositionDirect) ) {
+    if( ! leftArmDevice.view(iPositionDirect) )    {
         printf("view(iPositionDirect) not worked.\n");
         return false;
     }
-    if( ! leftArmDevice.view(iVelocityControl) ) {
+    if( ! leftArmDevice.view(iVelocityControl) )    {
         printf("view(iVelocityControl) not worked.\n");
         return false;
     }
+
     inCvPort.setIEncodersControl(iEncoders);
     inCvPort.setIPositionControl(iPositionControl);
     inCvPort.setIPositionDirect(iPositionDirect);
     inCvPort.setIVelocityControl(iVelocityControl);
 
-    //-- Robot device
+    //-- Solver device
     yarp::os::Property solverOptions;
     solverOptions.fromString( rf.toString() );
     std::string solverStr = "KdlSolver";
     solverOptions.put("device",solverStr);
 
     solverDevice.open(solverOptions);
-    if( ! solverDevice.isValid() ) {
+    if( ! solverDevice.isValid() )    {
         CD_ERROR("solver device not valid: %s.\n",solverStr.c_str());
         return false;
     }
-    if( ! solverDevice.view(iCartesianSolver) ) {
+    if( ! solverDevice.view(iCartesianSolver) )    {
         CD_ERROR("Could not view iCartesianSolver in: %s.\n",solverStr.c_str());
         return false;
     }
